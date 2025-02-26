@@ -55,7 +55,7 @@ jobs:
         pkill -f /home/$EC2_USER/geuckrock/current/geuckrock-front-server.jar || true
         echo "Updating current application..."
         sudo mkdir -p /home/$EC2_USER/geuckrock/current
-        sudo mv /home/$EC2_USER/geuckrock/tobe/geuckrock-front-server.jar /home/$EC2_USER/geuckrock/current/
+        sudo mv /home/ubuntu/geuckrock/tobe/geuckrock-front-server.jar /home/$EC2_USER/geuckrock/current/
         echo "Starting new application..."
         cd /home/$EC2_USER/geuckrock/current
         sudo fuser -k -n tcp 8080 || true
