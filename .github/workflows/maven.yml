@@ -47,13 +47,13 @@ jobs:
         echo "$SSH_PRIVATE_KEY" > github-actions-key
         chmod 600 github-actions-key
         ssh -i github-actions-key -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << 'EOF'
+          echo "EC2_USER: $EC2_USER"  # $EC2_USER가 제대로 설정되었는지 확인
           echo "Stopping existing application..."
           pkill -f /home/$EC2_USER/geuckrock/current/project.jar || true
 
           echo "Updating current application..."
-          rm -rf /home/$EC2_USER/geuckrock/current
-          mkdir -p /home/$EC2_USER/geuckrock/current  # 변경된 부분: -p 옵션 추가
-          mv /home/$EC2_USER/geuckrock/tobe/*.jar /home/$EC2_USER/geuckrock/current/
+          sudo mkdir -p /home/$EC2_USER/geuckrock/current  # 권한 문제 해결을 위한 sudo 추가
+          sudo mv /home/$EC2_USER/geuckrock/tobe/*.jar /home/$EC2_USER/geuckrock/current/
 
           echo "Starting new application..."
           cd /home/$EC2_USER/geuckrock/current
