@@ -36,7 +36,13 @@ jobs:
         SSH_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
         EC2_HOST: ${{ secrets.EC2_HOST }}
         EC2_USER: ${{ secrets.EC2_USER }}
+      
       run: |
+        if [ -z "$EC2_USER" ]; then
+        echo "EC2_USER is not set!"
+        exit 1
+        fi
+        
         echo "$SSH_PRIVATE_KEY" > github-actions-key
         chmod 600 github-actions-key
         scp -v -i github-actions-key -o StrictHostKeyChecking=no target/geuckrock-front-server.jar $EC2_USER@$EC2_HOST:/home/$EC2_USER/geuckrock/tobe
