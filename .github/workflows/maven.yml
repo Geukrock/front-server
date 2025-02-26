@@ -59,7 +59,8 @@ jobs:
         echo "Starting new application..."
         cd /home/$EC2_USER/geuckrock/current
         sudo fuser -k -n tcp 8080 || true
-        nohup java -jar geuckrock-front-server.jar > ./output.log 2>&1 &
+        nohup java -jar geuckrock-front-server.jar > /home/ubuntu/geuckrock/current/output.log 2>&1 &
+
         sleep 5
         if ps aux | grep '[j]ava -jar /home/$EC2_USER/geuckrock/current/geuckrock-front-server.jar' > /dev/null
         then
