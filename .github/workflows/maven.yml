@@ -46,7 +46,7 @@ jobs:
       run: |
         echo "$SSH_PRIVATE_KEY" > github-actions-key
         chmod 600 github-actions-key
-        scp -i github-actions-key -o StrictHostKeyChecking=no target/*.jar $EC2_USER@$EC2_HOST:/home/$EC2_USER/app.jar
+        scp -v -i github-actions-key -o StrictHostKeyChecking=no target/*.jar $EC2_USER@$EC2_HOST:/home/$EC2_USER/app.jar
 
     - name: Deploy on EC2 via SSH
       env:
