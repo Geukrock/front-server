@@ -53,6 +53,12 @@ jobs:
         EC2_HOST: ${{ secrets.EC2_HOST }}
         EC2_USER: ${{ secrets.EC2_USER }}
       run: |
+
+        if [ -z "$EC2_USER" ]; then
+        echo "EC2_USER is not set!"
+        exit 1
+        fi
+      
         echo "$SSH_PRIVATE_KEY" > github-actions-key
         chmod 600 github-actions-key
         ssh -i github-actions-key -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << 'EOF'
