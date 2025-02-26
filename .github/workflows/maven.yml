@@ -24,7 +24,10 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
 
-    # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
+    - name: Rename JAR file
+      run: |
+        mv target/geuckrock-front-server-*.jar target/geuckrock-front-server.jar
+
     - name: Update dependency graph
       uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
 
@@ -36,7 +39,7 @@ jobs:
       run: |
         echo "$SSH_PRIVATE_KEY" > github-actions-key
         chmod 600 github-actions-key
-        scp -v -i github-actions-key -o StrictHostKeyChecking=no target/*.jar $EC2_USER@$EC2_HOST:/home/$EC2_USER/geuckrock/tobe
+        scp -v -i github-actions-key -o StrictHostKeyChecking=no target/geuckrock-front-server.jar $EC2_USER@$EC2_HOST:/home/$EC2_USER/geuckrock/tobe
 
     - name: Deploy on EC2 via SSH
       env:
@@ -47,31 +50,23 @@ jobs:
         echo "$SSH_PRIVATE_KEY" > github-actions-key
         chmod 600 github-actions-key
         ssh -i github-actions-key -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << 'EOF'
-          echo "EC2_USER: $EC2_USER"  # $EC2_USER가 제대로 설정되었는지 확인
+          echo "EC2_USER: $EC2_USER"
           echo "Stopping existing application..."
-          pkill -f /home/$EC2_USER/geuckrock/current/project.jar || true
-
+          pkill -f /home/$EC2_USER/geuckrock/current/geuckrock-front-server.jar || true
           echo "Updating current application..."
-          sudo mkdir -p /home/$EC2_USER/geuckrock/current  # 권한 문제 해결을 위한 sudo 추가
-          sudo mv /home/$EC2_USER/geuckrock/tobe/*.jar /home/$EC2_USER/geuckrock/current/
-
+          sudo mkdir -p /home/$EC2_USER/geuckrock/current
+          sudo mv /home/$EC2_USER/geuckrock/tobe/geuckrock-front-server.jar /home/$EC2_USER/geuckrock/current/
           echo "Starting new application..."
           cd /home/$EC2_USER/geuckrock/current
           sudo fuser -k -n tcp 8080 || true
-          nohup java -jar project.jar > ./output.log 2>&1 &
-
-          # Wait for a few seconds to let the application start
+          nohup java -jar geuckrock-front-server.jar > ./output.log 2>&1 &
           sleep 5
-
-          # Check if the application is running by searching for the process
-          if ps aux | grep '[j]ava -jar /home/$EC2_USER/geuckrock/current/project.jar' > /dev/null
+          if ps aux | grep '[j]ava -jar /home/$EC2_USER/geuckrock/current/geuckrock-front-server.jar' > /dev/null
           then
             echo "Application started successfully!"
           else
             echo "Application failed to start. Check the log for errors."
             exit 1
           fi
-
-          # Optionally, tail the logs to monitor the application output
           tail -f /home/$EC2_USER/geuckrock/current/output.log
         EOF
