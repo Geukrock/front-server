@@ -56,7 +56,7 @@ jobs:
       run: |
         echo "$SSH_PRIVATE_KEY" > github-actions-key
         chmod 600 github-actions-key
-        ssh -i private_key.pem -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << 'EOF'
+        ssh -i github-actions-key -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << 'EOF'
           echo "Stopping existing application..."
           pkill -f app.jar || true
           echo "Starting new application..."
