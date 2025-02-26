@@ -48,26 +48,26 @@ jobs:
         EC2_USER: ${{ secrets.EC2_USER }}
       run: |
         echo "$SSH_PRIVATE_KEY" > github-actions-key
-        run: echo "EC2_USER is set to: $EC2_USER"
         chmod 600 github-actions-key
         ssh -i github-actions-key -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << 'EOF'
-          echo "EC2_USER: $EC2_USER"
-          echo "Stopping existing application..."
-          pkill -f /home/$EC2_USER/geuckrock/current/geuckrock-front-server.jar || true
-          echo "Updating current application..."
-          sudo mkdir -p /home/$EC2_USER/geuckrock/current
-          sudo mv /home/$EC2_USER/geuckrock/tobe/geuckrock-front-server.jar /home/$EC2_USER/geuckrock/current/
-          echo "Starting new application..."
-          cd /home/$EC2_USER/geuckrock/current
-          sudo fuser -k -n tcp 8080 || true
-          nohup java -jar geuckrock-front-server.jar > ./output.log 2>&1 &
-          sleep 5
-          if ps aux | grep '[j]ava -jar /home/$EC2_USER/geuckrock/current/geuckrock-front-server.jar' > /dev/null
-          then
-            echo "Application started successfully!"
-          else
-            echo "Application failed to start. Check the log for errors."
-            exit 1
-          fi
-          tail -f /home/$EC2_USER/geuckrock/current/output.log
+        echo "EC2_USER: $EC2_USER"
+        echo "Stopping existing application..."
+        pkill -f /home/$EC2_USER/geuckrock/current/geuckrock-front-server.jar || true
+        echo "Updating current application..."
+        sudo mkdir -p /home/$EC2_USER/geuckrock/current
+        sudo mv /home/$EC2_USER/geuckrock/tobe/geuckrock-front-server.jar /home/$EC2_USER/geuckrock/current/
+        echo "Starting new application..."
+        cd /home/$EC2_USER/geuckrock/current
+        sudo fuser -k -n tcp 8080 || true
+        nohup java -jar geuckrock-front-server.jar > ./output.log 2>&1 &
+        sleep 5
+        if ps aux | grep '[j]ava -jar /home/$EC2_USER/geuckrock/current/geuckrock-front-server.jar' > /dev/null
+        then
+          echo "Application started successfully!"
+        else
+          echo "Application failed to start. Check the log for errors."
+          exit 1
+        fi
+        tail -f /home/$EC2_USER/geuckrock/current/output.log
         EOF
+
