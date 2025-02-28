@@ -19,7 +19,7 @@ fi
 
 
 # 도커 컨테이너 실행시 필요한 환경변수 설정
-export SERVER_PORT="{생략}"
+export SERVER_PORT=8080
 
 # 도커 컨테이너 실행
 docker run -d \
