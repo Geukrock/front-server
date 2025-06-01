@@ -9,5 +9,4 @@ public class GeuckrockFrontServerApplication {
     public static void main(String[] args) {
         SpringApplication.run(GeuckrockFrontServerApplication.class, args);
     }
-
 }
